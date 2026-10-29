@@ -24,7 +24,7 @@ Threadmark stores excerpts in a local SQLite database under `$CODEX_HOME/threadm
 python3 -m unittest discover -s tests -v
 ```
 
-See the [benchmark and paired experiment protocol](docs/benchmark.md) for measured synthetic retrieval results and end-to-end limitations.
+See the [architecture](docs/architecture.md) for the data flow and trust boundaries, and the [benchmark and paired experiment protocol](docs/benchmark.md) for measured synthetic retrieval results and end-to-end limitations.
 
 See [contribution guidance](CONTRIBUTING.md) and [integration research](docs/research.md) for development conventions, official Codex interfaces, and their limitations.
 

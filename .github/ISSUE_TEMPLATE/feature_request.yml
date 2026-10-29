@@ -1,0 +1,19 @@
+name: Feature request
+description: Suggest an improvement to Threadmark
+title: "Feature: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach or alternatives
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Do not include private conversations, credentials, or sensitive paths.
