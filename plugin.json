@@ -1,0 +1,15 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "threadmark",
+  "version": "0.1.0",
+  "description": "Local, project-scoped context recall for Codex.",
+  "extensions": {
+    "com.openai": {
+      "hooks": "./hooks/hooks.json",
+      "interface": {
+        "displayName": "Threadmark",
+        "shortDescription": "Recall relevant local Codex context"
+      }
+    }
+  }
+}

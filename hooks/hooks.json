@@ -1,0 +1,7 @@
+{
+  "description": "Threadmark stores local chat excerpts and recalls same-project context on prompts.",
+  "hooks": {
+    "Stop": [{"hooks": [{"type": "command", "command": "python3 \"${PLUGIN_ROOT}/hooks/threadmark_hook.py\"", "timeout": 5, "statusMessage": "Saving local context"}]}],
+    "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "python3 \"${PLUGIN_ROOT}/hooks/threadmark_hook.py\"", "timeout": 5, "additionalContextLimit": 500, "statusMessage": "Checking local context"}]}]
+  }
+}
