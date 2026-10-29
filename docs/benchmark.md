@@ -17,7 +17,26 @@ Recall is useful returned excerpts divided by eligible useful documents, micro-a
 
 With fixture 1.0.0 and default limits, the dev split returned 2/2 recall, 2/4 precision, and 1/1 no-answer false positives; 198 excerpt characters. The held-out split returned 4/7 recall, 4/10 precision, and 2/3 no-answer false positives; 1,552 excerpt characters and a median search time of approximately 0.085 ms on this run. The short identifier and paraphrase cases missed, the long message's useful passage was truncated, duplicates occupied slots, and an obsolete conflicting statement was also returned. Project and active-session evidence did not cross their boundaries. These are observations from nine held-out queries, not generalizable performance estimates.
 
-Prioritize testing passage-centered snippets and selective abstention on development cases, then evaluate a new untouched holdout; investigate duplicate suppression and conflict provenance next. These are hypotheses for future changes, not measured improvements. Do not weaken project/session boundaries or assume timestamps resolve conflicts. Actual Codex task quality, safety, tokens, cached input, cost and latency remain unmeasured. API billing and subscription limits are separate observables.
+## Passage selection and abstention, 2026-10-29
+
+The updated search selects a compact cluster of query terms and surrounding text within the existing shared character budget. It requires lexical coverage in the visible passage, abstains on weak matches or fragments, and allows an isolated two-character uppercase identifier when it has at most two matching candidates. Questions allow one missing term to retain some paraphrases. These heuristics do not establish that a passage answers the question or that it is current. Conflicting excerpts retain their session and timestamp provenance; recency does not decide truth. Text beyond the 4,000-character ingestion cap cannot be recovered. The initial 100-candidate cap, lexical matching, limited short-identifier support and shared budget can also cause misses.
+
+After tuning only on the existing development cases and regression tests, an independently authored fixture, `benchmarks/fixtures/retrieval-holdout-v1.json` (holdout-1.0.0), was evaluated without further tuning. Both versions used the same default limits and isolated temporary databases. The baseline was commit `ed833e7`.
+
+| Split and version | Useful / eligible | Useful / returned | No-answer queries with a hit | Excerpt characters |
+| --- | ---: | ---: | ---: | ---: |
+| Development, baseline | 2/2 | 2/4 | 1/1 | 198 |
+| Development, updated | 2/2 | 2/3 | 0/1 | 163 |
+| New holdout, baseline | 5/8 | 5/12 | 3/5 | 2,865 |
+| New holdout, updated | 8/8 | 8/11 | 2/5 | 2,840 |
+
+The new holdout has 12 queries; two no-answer queries still returned weak or undecided evidence. Both conflicting statements were counted as useful evidence in that fixture, not judged true. The two deep passages and an isolated short identifier became visible, but these small synthetic cases cannot estimate real-world accuracy. Median search time was approximately 0.103 ms baseline and 0.112 ms updated in these individual holdout runs; this is not a reliable performance comparison. Reproduce with:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 -c 'import json; from benchmarks.retrieval import run; print(json.dumps(run(fixture="benchmarks/fixtures/retrieval-holdout-v1.json", split="eval"), indent=2))'
+```
+
+Actual Codex task quality, safety, tokens, cached input, cost and end-to-end latency remain unmeasured. API billing and subscription limits are separate observables. No live Codex benchmark was run.
 
 See [interface research](benchmark-research.md) for verified local CLI capabilities and limitations.
 

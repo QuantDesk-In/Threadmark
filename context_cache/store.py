@@ -18,8 +18,44 @@ _SECRET = re.compile(
     r'-----BEGIN [A-Z ]*PRIVATE KEY-----|\b(?:sk|ghp|github_pat|xox[baprs])-?[A-Za-z0-9_-]{16,}|\bBearer\s+[A-Za-z0-9._-]{12,})'
 )
 _WORD = re.compile(r'[\w]{3,}', re.UNICODE)
+_PASSAGE_WORD = re.compile(r'\w{2,}', re.UNICODE)
 _STOP = frozenset('the and for with this that from your have what when where how should would could into about then than using use'.split())
 _MAX_MESSAGE = 4000
+
+
+def _passage(text: str, terms: set[str], budget: int) -> tuple[str, set[str]]:
+    """Select a compact cluster of matching words and retain surrounding context."""
+    matches = [(m.start(), m.end(), m.group().lower()) for m in _PASSAGE_WORD.finditer(text)
+               if m.group().lower() in terms]
+    if len(text) <= budget:
+        return text, {term for _, _, term in matches}
+    if not matches:
+        return text[:budget], set()
+    # Reserve room for truncation markers. Favor a local cluster of distinct
+    # query terms, then a shorter span; use remaining space for context.
+    width = max(1, budget - 2)
+    best = (0, 0, matches[0][0], matches[0][1])
+    for i, (start, end, _) in enumerate(matches):
+        seen = set()
+        for _, last, term in matches[i:]:
+            if last - start > width:
+                break
+            seen.add(term)
+            candidate = (len(seen), -(last - start), start, last)
+            if candidate[:2] > best[:2]:
+                best = candidate
+    start, end = best[2:]
+    left = max(0, start - max(0, (width - (end - start)) // 3))
+    left = min(left, max(0, len(text) - width))
+    right = min(len(text), left + width)
+    prefix = '…' if left else ''
+    suffix = '…' if right < len(text) else ''
+    excerpt = (prefix + text[left:right] + suffix)[:budget]
+    # Use offsets in the original text, so a clipped word cannot count as a
+    # complete anchor even if its fragment happens to equal a query term.
+    visible_end = left + max(0, min(right - left, budget - len(prefix)))
+    visible = {term for start, end, term in matches if start >= left and end <= visible_end}
+    return excerpt, visible
 
 
 def _project(value: str) -> str:
@@ -167,6 +203,9 @@ class Cache:
                limit: int = 3, max_chars: int = 1200) -> list[dict]:
         """Find relevant excerpts within exactly one canonical project path."""
         terms = list(dict.fromkeys(t.lower() for t in _WORD.findall(query) if t.lower() not in _STOP))[:12]
+        short_identifier = bool(re.fullmatch(r'[A-Z][A-Z0-9]', query.strip()))
+        if short_identifier:
+            terms = [query.strip().lower()]
         if not terms or limit <= 0 or max_chars <= 0:
             return []
         expression = ' OR '.join('"' + t.replace('"', '""') + '"' for t in terms)
@@ -175,18 +214,32 @@ class Cache:
                  WHERE message_fts MATCH ? AND m.project = ? AND (? IS NULL OR m.session_id != ?)
                  ORDER BY bm25(message_fts), m.timestamp DESC LIMIT ?'''
         rows = list(self.db.execute(sql, (expression, _project(project), exclude_session, exclude_session, 100)))
-        if len(terms) == 1 and (len(terms[0]) < 6 or len(rows) > 2):
+        if len(terms) == 1 and ((len(terms[0]) < 6 and not short_identifier) or len(rows) > 2):
             return []
+        question = bool(re.search(r'\b(?:what|when|where|how|which|why)\b', query, re.I))
+        required = len(terms) if len(terms) <= 3 else max(2, (3 * len(terms) + 3) // 4)
+        if question and len(terms) >= 3:
+            required = max(2, required - 1)
         hits = []
         remaining = min(max_chars, 12000)
         for text, role, session_id, timestamp, item_project in rows:
-            if len(terms) > 1 and len(set(terms) & set(t.lower() for t in _WORD.findall(text))) < 2:
+            words = set(t.lower() for t in _WORD.findall(text))
+            if short_identifier:
+                words.update(t.lower() for t in re.findall(r'\w{2,}', text))
+            # Questions often contain an action paraphrase; allow one unmatched
+            # term, but only with at least two lexical anchors.
+            if len(set(terms) & words) < required:
                 continue
             if len(hits) >= min(limit, 20):
                 break
             if remaining <= 0:
                 break
-            excerpt = text[:remaining]
+            # A truncated sliver rarely provides useful context.
+            if len(text) > remaining and remaining < 32:
+                continue
+            excerpt, visible = _passage(text, set(terms), remaining)
+            if len(visible) < required:
+                continue
             remaining -= len(excerpt)
             hits.append(dict(text=excerpt, role=role, session_id=session_id, timestamp=timestamp, project=item_project))
         return hits

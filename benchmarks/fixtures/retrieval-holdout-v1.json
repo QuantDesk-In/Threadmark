@@ -1,0 +1,106 @@
+{
+  "version": "holdout-1.0.0",
+  "cases": [
+    {
+      "id": "holdout-deep-tail",
+      "split": "eval",
+      "query": "falcon export destination",
+      "documents": [
+        {"id": "tail", "prefix_repeat": "The planning meeting included routine background details. ", "prefix_count": 46, "text": "Falcon export destination is the west vault. The team will check access next week.", "answer": "west vault"},
+        {"id": "noise", "text": "Falcon charts use a blue palette."}
+      ]
+    },
+    {
+      "id": "holdout-mid-passage",
+      "split": "eval",
+      "query": "marigold backup frequency",
+      "documents": [
+        {"id": "middle", "prefix_repeat": "This is background. ", "prefix_count": 75, "text": "Marigold backup frequency is every six hours. Additional notes concern the dashboard.", "answer": "every six hours"}
+      ]
+    },
+    {
+      "id": "holdout-identifier",
+      "split": "eval",
+      "query": "R7",
+      "documents": [
+        {"id": "identifier", "text": "R7 is the internal name for the reporting pipeline.", "answer": "reporting pipeline"}
+      ]
+    },
+    {
+      "id": "holdout-paraphrase",
+      "split": "eval",
+      "query": "how can amber deployment be undone",
+      "documents": [
+        {"id": "paraphrase", "text": "Amber deployment rollback restores the prior container image.", "answer": "prior container image"}
+      ]
+    },
+    {
+      "id": "holdout-exact",
+      "split": "eval",
+      "query": "cobalt retry limit",
+      "documents": [
+        {"id": "exact", "text": "The cobalt retry limit is four attempts.", "answer": "four attempts"}
+      ]
+    },
+    {
+      "id": "holdout-weak-overlap",
+      "split": "eval",
+      "query": "what is the quartz delivery deadline",
+      "documents": [
+        {"id": "noise", "text": "Quartz has a new color palette for the delivery dashboard."},
+        {"id": "other", "text": "Delivery deadline notices are rendered in green."}
+      ]
+    },
+    {
+      "id": "holdout-undecided",
+      "split": "eval",
+      "query": "poppy retention period",
+      "documents": [
+        {"id": "unknown", "text": "The poppy retention period has not been decided yet."}
+      ]
+    },
+    {
+      "id": "holdout-outside-project",
+      "split": "eval",
+      "query": "saffron archive region",
+      "documents": [
+        {"id": "foreign", "project": "other", "text": "Saffron archive region is north.", "answer": "north"},
+        {"id": "local", "text": "Saffron archive color is yellow."}
+      ]
+    },
+    {
+      "id": "holdout-active-session",
+      "split": "eval",
+      "query": "tulip cache duration",
+      "documents": [
+        {"id": "current", "session": "active", "text": "Tulip cache duration is two minutes.", "answer": "two minutes"}
+      ]
+    },
+    {
+      "id": "holdout-conflict",
+      "split": "eval",
+      "query": "elm queue capacity",
+      "documents": [
+        {"id": "older", "timestamp": "2025-02-01", "text": "Elm queue capacity was recorded as twelve.", "answer": "twelve"},
+        {"id": "newer", "timestamp": "2026-02-01", "text": "Elm queue capacity was recorded as twenty.", "answer": "twenty"}
+      ]
+    },
+    {
+      "id": "holdout-unrelated",
+      "split": "eval",
+      "query": "what is the iris retry policy",
+      "documents": [
+        {"id": "irrelevant", "text": "The lavender service presents its greeting in Spanish."}
+      ]
+    },
+    {
+      "id": "holdout-mixed",
+      "split": "eval",
+      "query": "sequoia import format",
+      "documents": [
+        {"id": "relevant", "text": "Sequoia import format is newline-delimited JSON.", "answer": "newline-delimited JSON"},
+        {"id": "noise", "text": "Sequoia import buttons have a gray border."}
+      ]
+    }
+  ]
+}
