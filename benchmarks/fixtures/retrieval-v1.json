@@ -1,0 +1,178 @@
+{
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "dev-exact",
+      "split": "dev",
+      "query": "cedar migration strategy",
+      "documents": [
+        {
+          "id": "d1",
+          "text": "Cedar migration strategy uses staged rollout.",
+          "answer": "staged rollout"
+        },
+        {
+          "id": "d2",
+          "text": "Cedar migration strategy for a different service uses a blue theme."
+        }
+      ]
+    },
+    {
+      "id": "dev-paraphrase",
+      "split": "dev",
+      "query": "how is violet deployment reverted",
+      "documents": [
+        {
+          "id": "d1",
+          "text": "Violet deployment rollback uses the previous image.",
+          "answer": "previous image"
+        }
+      ]
+    },
+    {
+      "id": "dev-no-answer",
+      "split": "dev",
+      "query": "maple release policy",
+      "documents": [
+        {
+          "id": "d1",
+          "text": "Maple release notes discuss a logo."
+        }
+      ]
+    },
+    {
+      "id": "eval-short",
+      "split": "eval",
+      "query": "QX",
+      "documents": [
+        {
+          "id": "d1",
+          "text": "QX is the project identifier.",
+          "answer": "project identifier"
+        }
+      ]
+    },
+    {
+      "id": "eval-duplicates",
+      "split": "eval",
+      "query": "birch retention interval",
+      "documents": [
+        {
+          "id": "d1",
+          "text": "Birch retention interval is seven days.",
+          "answer": "seven days"
+        },
+        {
+          "id": "d2",
+          "text": "Birch retention interval is seven days.",
+          "answer": "seven days"
+        },
+        {
+          "id": "d3",
+          "text": "Birch retention interval labels appear in the interface."
+        }
+      ]
+    },
+    {
+      "id": "eval-late-passage",
+      "split": "eval",
+      "query": "orchid archive location",
+      "documents": [
+        {
+          "id": "d1",
+          "prefix_repeat": "Background notes. ",
+          "prefix_count": 90,
+          "text": "Orchid archive location is shelf nine.",
+          "answer": "shelf nine"
+        },
+        {
+          "id": "d2",
+          "text": "Orchid archive location is discussed without a decision."
+        }
+      ]
+    },
+    {
+      "id": "eval-conflict",
+      "split": "eval",
+      "query": "juniper queue capacity",
+      "documents": [
+        {
+          "id": "d1",
+          "text": "Juniper queue capacity is five.",
+          "timestamp": "2025-01-01"
+        },
+        {
+          "id": "d2",
+          "text": "Juniper queue capacity is ten after the revision.",
+          "timestamp": "2026-01-01",
+          "answer": "ten after the revision"
+        }
+      ]
+    },
+    {
+      "id": "eval-no-answer",
+      "split": "eval",
+      "query": "willow retry count",
+      "documents": [
+        {
+          "id": "d1",
+          "text": "Willow retry count is mentioned but remains undecided."
+        }
+      ]
+    },
+    {
+      "id": "eval-project",
+      "split": "eval",
+      "query": "acorn release schedule",
+      "documents": [
+        {
+          "id": "d1",
+          "project": "other",
+          "text": "Acorn release schedule is Friday.",
+          "answer": "Friday"
+        },
+        {
+          "id": "d2",
+          "text": "Acorn release notes cover unrelated changes."
+        }
+      ]
+    },
+    {
+      "id": "eval-active",
+      "split": "eval",
+      "query": "hazel archive destination",
+      "documents": [
+        {
+          "id": "d1",
+          "session": "active",
+          "text": "Hazel archive destination is the attic.",
+          "answer": "attic"
+        }
+      ]
+    },
+    {
+      "id": "eval-paraphrase",
+      "split": "eval",
+      "query": "where are linden snapshots stored",
+      "documents": [
+        {
+          "id": "d1",
+          "text": "Linden backups reside in cold storage.",
+          "answer": "cold storage"
+        }
+      ]
+    },
+    {
+      "id": "eval-exact",
+      "split": "eval",
+      "query": "spruce timeout policy",
+      "documents": [
+        {
+          "id": "d1",
+          "text": "Spruce timeout policy is thirty seconds.",
+          "answer": "thirty seconds"
+        }
+      ]
+    }
+  ]
+}
